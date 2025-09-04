@@ -11,8 +11,8 @@ const Topbar = ({ toggleCart }: TopbarProps) => {
         <h2 className="font-extrabold text-3xl font-mono">FASH_MEN</h2>
         <div className="flex gap-4">
           <SearchBox />
-          <ShoppingCart onClick={toggleCart} />
-          <User />
+          <ShoppingCart onClick={toggleCart} className="cursor-pointer" />
+          <User className="cursor-pointer" />
         </div>
       </div>
     </main>
