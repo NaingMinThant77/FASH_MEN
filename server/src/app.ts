@@ -24,6 +24,8 @@ app.use(cookieParser());
 // routes
 import userRoutes from "./routes/user";
 app.use("/api/", userRoutes);
+import productRoutes from "./routes/product";
+app.use("/api/products/", productRoutes);
 
 app.use(errorHandler);
 
