@@ -2,22 +2,34 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { registerSchema, type RegisterSchema } from "../schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 const Register = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<RegisterSchema>({
+  const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
   });
 
-  const submit: SubmitHandler<RegisterSchema> = (data: RegisterSchema) => {};
+  const onSubmit: SubmitHandler<RegisterSchema> = (data: RegisterSchema) => {
+    console.log(data);
+  };
 
   return (
     <section>
-      <div className=" bg-gray-50 flex flex-col justify-center pt-12 pb-6 sm:px-6 lg:px-8">
+      <div className=" bg-gray-50 flex flex-col justify-center pt-12 pb-2 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <img
             className="mx-auto h-10 w-auto"
@@ -39,91 +51,64 @@ const Register = () => {
         </div>
 
         <div className="mt-2 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <form method="POST" onSubmit={handleSubmit(submit)}>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium leading-5  text-gray-700"
-                >
-                  Name
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    {...register("username")}
-                    id="name"
-                    name="name"
-                    placeholder="John Doe"
-                    type="text"
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                  />
-                </div>
-                {errors.username && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.username.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="mt-3">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium leading-5 text-gray-700"
-                >
-                  Email address
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    {...register("email")}
-                    id="email"
-                    name="email"
-                    placeholder="user@example.com"
-                    type="email"
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                  />
-                </div>
-                {errors.email && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="mt-3">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-5 text-gray-700"
-                >
-                  Password
-                </label>
-                <div className="mt-1 rounded-md shadow-sm">
-                  <input
-                    {...register("password")}
-                    id="password"
-                    name="password"
-                    type="password"
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                  />
-                </div>
-                {errors.password && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="mt-6">
-                <span className="block w-full rounded-md shadow-sm">
-                  <button
-                    disabled={isSubmitting}
-                    type="submit"
-                    className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
-                  >
-                    Create account
-                  </button>
-                </span>
-              </div>
-            </form>
+          <div className="bg-white py-8 px-4 shadow-md sm:rounded-lg sm:px-10">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input type="text" placeholder="John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="example@fash.com"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="********"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full cursor-pointer">
+                  Register
+                </Button>
+              </form>
+            </Form>
           </div>
         </div>
       </div>
