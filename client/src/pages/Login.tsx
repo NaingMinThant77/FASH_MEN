@@ -14,13 +14,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { useLoginMutation } from "@/store/slices/userApi";
 import { toast } from "sonner";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUserInfo } from "@/store/slices/auth";
+import type { RootState } from "@/store";
+import { useEffect } from "react";
 
 const Login = () => {
   const [loginMutation, { isLoading, isError }] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const userInfo = useSelector((state: RootState) => state.auth.userInfo);
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -46,6 +49,12 @@ const Login = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [userInfo]);
 
   console.log(isError);
 

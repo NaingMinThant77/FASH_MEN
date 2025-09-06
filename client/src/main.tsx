@@ -11,6 +11,8 @@ import ProductDetail from "./pages/ProductDetail.tsx";
 import { Provider } from "react-redux";
 import { store } from "./store/index.ts";
 import { Toaster } from "sonner";
+import Profile from "./pages/Profile.tsx";
+import IsLogin from "./pages/isLogin.tsx";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +26,14 @@ const router = createBrowserRouter([
       { path: "/login", element: <Login /> },
       { path: "/register", element: <Register /> },
       { path: "/products/:id", element: <ProductDetail /> },
+      {
+        path: "/profile",
+        element: (
+          <IsLogin>
+            <Profile />
+          </IsLogin>
+        ),
+      },
     ],
   },
 ]);

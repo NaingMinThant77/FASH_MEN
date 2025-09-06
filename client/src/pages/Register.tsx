@@ -14,10 +14,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { useRegisterMutation } from "@/store/slices/userApi";
 import { toast } from "sonner";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
+import { useEffect } from "react";
 
 const Register = () => {
   const [registerMutation, { isLoading, isError }] = useRegisterMutation();
   const navigate = useNavigate();
+  const userInfo = useSelector((state: RootState) => state.auth.userInfo);
 
   const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
@@ -43,6 +47,12 @@ const Register = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [userInfo]);
 
   console.log(isError);
 
