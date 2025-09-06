@@ -1,7 +1,7 @@
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { loginSchema, type LoginSchema } from "../schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,8 +12,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useLoginMutation } from "@/store/slices/userApi";
+import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { setUserInfo } from "@/store/slices/auth";
 
 const Login = () => {
+  const [loginMutation, { isLoading, isError }] = useLoginMutation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -22,9 +30,24 @@ const Login = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<LoginSchema> = (data: LoginSchema) => {
-    console.log(data);
+  const onSubmit = async (data: LoginSchema) => {
+    try {
+      const res = await loginMutation(data).unwrap();
+      dispatch(setUserInfo(res));
+      form.reset();
+      toast.success("Login successfully");
+      navigate("/");
+    } catch (error: unknown) {
+      if (typeof error === "object" && error !== null && "data" in error) {
+        const err = error as { data: { message: string } };
+        toast.error(err.data.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
   };
+
+  console.log(isError);
 
   return (
     <section>
@@ -90,8 +113,12 @@ const Login = () => {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full cursor-pointer">
-                  Login
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full cursor-pointer"
+                >
+                  {isLoading ? "Submitting..." : "Login"}
                 </Button>
               </form>
             </Form>

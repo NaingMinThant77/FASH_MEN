@@ -1,5 +1,6 @@
+import { Link } from "react-router";
 import SearchBox from "../../common/SearchBox";
-import { ShoppingCart, User } from "lucide-react";
+import { LogIn, ShoppingCart } from "lucide-react";
 
 interface TopbarProps {
   toggleCart: () => void;
@@ -12,7 +13,10 @@ const Topbar = ({ toggleCart }: TopbarProps) => {
         <div className="flex gap-4">
           <SearchBox />
           <ShoppingCart onClick={toggleCart} className="cursor-pointer" />
-          <User className="cursor-pointer" />
+          <Link to="/login">
+            {" "}
+            <LogIn className="cursor-pointer" />
+          </Link>
         </div>
       </div>
     </main>
