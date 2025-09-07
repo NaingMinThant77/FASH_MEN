@@ -4,7 +4,7 @@ import asyncHandler from "../utils/asyncHandler";
 import generateToken from "../utils/generateToken";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { deleteImage, uploadSingleImage } from "../utils/cloudinary";
-import { Types } from "mongoose";
+import bcrypt from "bcryptjs";
 
 // @route POST | /api/register
 // @desc Register a new user
@@ -122,5 +122,33 @@ export const updateName = asyncHandler(
     const { name } = req.body;
     await User.findByIdAndUpdate(user?._id, { name });
     res.status(200).json({ message: "ProfileName updated successfully." });
+  }
+);
+
+// @route POST | /api/update-password
+// @desc update User's password
+// @access Private
+export const updatePassword = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const { user } = req;
+    const { oldPassword, newPassword } = req.body;
+
+    const existingUser = await User.findOne({ email: user?.email }).select(
+      "password"
+    );
+    if (!existingUser) {
+      res.status(400);
+      throw new Error("User not found.");
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, existingUser.password);
+    if (!isMatch) {
+      res.status(400);
+      throw new Error("Old password is incorrect.");
+    }
+
+    existingUser.password = newPassword;
+    await existingUser.save();
+    res.status(200).json({ message: "Password updated successfully." });
   }
 );

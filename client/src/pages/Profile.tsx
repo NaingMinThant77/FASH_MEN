@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import EmailUpdateForm from "@/components/profile/EmailUpdateForm";
 import Loader from "@/components/Loader";
 import NameUpdateForm from "@/components/profile/NameUpdateForm";
+import PasswordUpdateForm from "@/components/profile/PasswordUpdateForm";
 
 const Profile = () => {
   const {
@@ -137,6 +138,18 @@ const Profile = () => {
             <CardContent className="flex flex-col md:flex-row gap-4">
               <EmailUpdateForm email={userInfo?.email ?? ""} />
               <NameUpdateForm name={userInfo?.name ?? ""} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Update Password</CardTitle>
+              <CardDescription>
+                You can edit your old password here.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col md:flex-row gap-4">
+              <PasswordUpdateForm />
             </CardContent>
           </Card>
         </section>

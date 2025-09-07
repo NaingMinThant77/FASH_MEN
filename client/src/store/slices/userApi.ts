@@ -67,6 +67,14 @@ export const userApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+    passwordUpdate: builder.mutation({
+      query: (data: { oldPassword: string; newPassword: string }) => ({
+        url: "/update-password",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
 });
 
@@ -78,4 +86,5 @@ export const {
   useUploadAvatarMutation,
   useEmailUpdateMutation,
   useNameUpdateMutation,
+  usePasswordUpdateMutation,
 } = userApiSlice;
