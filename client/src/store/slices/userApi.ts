@@ -59,6 +59,14 @@ export const userApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+    nameUpdate: builder.mutation({
+      query: (data: { name: string }) => ({
+        url: "/update-name",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
 });
 
@@ -69,4 +77,5 @@ export const {
   useCurrentUserQuery,
   useUploadAvatarMutation,
   useEmailUpdateMutation,
+  useNameUpdateMutation,
 } = userApiSlice;

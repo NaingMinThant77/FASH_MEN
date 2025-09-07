@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import EmailUpdateForm from "@/components/profile/EmailUpdateForm";
 import Loader from "@/components/Loader";
+import NameUpdateForm from "@/components/profile/NameUpdateForm";
 
 const Profile = () => {
   const {
@@ -128,13 +129,14 @@ const Profile = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Email Address</CardTitle>
+              <CardTitle>Update Name & Email</CardTitle>
               <CardDescription>
-                You can view or edit your email address here.
+                You can view or edit your name and email address here.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex flex-col md:flex-row gap-4">
               <EmailUpdateForm email={userInfo?.email ?? ""} />
+              <NameUpdateForm name={userInfo?.name ?? ""} />
             </CardContent>
           </Card>
         </section>
