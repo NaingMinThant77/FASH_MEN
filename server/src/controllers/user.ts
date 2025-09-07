@@ -3,7 +3,7 @@ import { User } from "../models/user";
 import asyncHandler from "../utils/asyncHandler";
 import generateToken from "../utils/generateToken";
 import { AuthRequest } from "../middlewares/authMiddleware";
-import { uploadSingleImage } from "../utils/cloudinary";
+import { deleteImage, uploadSingleImage } from "../utils/cloudinary";
 import { Types } from "mongoose";
 
 // @route POST | /api/register
@@ -67,17 +67,33 @@ export const uploadAvatar = asyncHandler(
     const { user } = req;
     const { image_url } = req.body;
 
-    const response = await uploadSingleImage(image_url, "fash_men/avatar");
+    const userDoc = await User.findById(user?._id);
 
-    await User.findOneAndUpdate(
-      { _id: user?._id },
-      {
-        avatar: {
-          url: response.image_url,
-          public_alt: response.public_alt,
-        },
-      }
-    );
-    res.status(200).json({ message: "Avatar uploaded successfully." });
+    if (userDoc?.avatar?.url) {
+      await deleteImage(userDoc.avatar.public_alt);
+    }
+
+    const response = await uploadSingleImage(image_url, "fash.com/avatar");
+
+    await User.findByIdAndUpdate(user?._id, {
+      avatar: {
+        url: response.image_url,
+        public_alt: response.public_alt,
+      },
+    });
+
+    res.status(200).json({ message: "Avatar Uploaded Successfully." });
+  }
+);
+
+// @route GET | /api/me
+// @desc get login user's Information
+// @access Private
+export const getUserInfo = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const { user } = req;
+
+    const userInfo = await User.findById(user?._id).select("-password");
+    res.status(200).json(userInfo);
   }
 );

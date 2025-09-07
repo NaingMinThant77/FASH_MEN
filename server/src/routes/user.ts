@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { login, logout, registerUser, uploadAvatar } from "../controllers/user";
+import {
+  getUserInfo,
+  login,
+  logout,
+  registerUser,
+  uploadAvatar,
+} from "../controllers/user";
 import {
   loginValidator,
   registerValidator,
@@ -21,5 +27,7 @@ router.post(
   validateRequest,
   uploadAvatar
 );
+
+router.get("/me", protect, getUserInfo);
 
 export default router;
