@@ -46,7 +46,12 @@ const Topbar = ({ toggleCart }: TopbarProps) => {
                 <User />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>
+                  <div className="flex flex-col">
+                    <p className="font-bold text-blue-500">{userInfo.name}</p>
+                    <p className="text-xs">{userInfo.email}</p>
+                  </div>
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="cursor-pointer">
                   <User2Icon />

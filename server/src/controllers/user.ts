@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { User } from "../models/user";
 import asyncHandler from "../utils/asyncHandler";
 import generateToken from "../utils/generateToken";
+import { AuthRequest } from "../middlewares/authMiddleware";
+import { uploadSingleImage } from "../utils/cloudinary";
+import { Types } from "mongoose";
 
 // @route POST | /api/register
 // @desc Register a new user
@@ -40,6 +43,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       _id: existingUser._id,
       name: existingUser.name,
       email: existingUser.email,
+      role: existingUser.role,
     });
   } else {
     res.status(401);
@@ -54,3 +58,26 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
   res.cookie("token", "", { httpOnly: true, expires: new Date(0) });
   res.status(200).json({ message: "Logged out successfully." });
 });
+
+// @route POST | /api/upload
+// @desc update or upload user avatar.
+// @access Private
+export const uploadAvatar = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const { user } = req;
+    const { image_url } = req.body;
+
+    const response = await uploadSingleImage(image_url, "fash_men/avatar");
+
+    await User.findOneAndUpdate(
+      { _id: user?._id },
+      {
+        avatar: {
+          url: response.image_url,
+          public_alt: response.public_alt,
+        },
+      }
+    );
+    res.status(200).json({ message: "Avatar uploaded successfully." });
+  }
+);

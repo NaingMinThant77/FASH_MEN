@@ -10,3 +10,7 @@ export const registerValidator = [
   body("email").isEmail().withMessage("Email must be valid"),
   body("password").notEmpty().withMessage("Password is required"),
 ];
+
+export const uploadImageValidator = [
+  body("image_url").notEmpty().withMessage("Image is required"),
+];

@@ -5,7 +5,7 @@ interface AuthState {
     _id: string;
     name: string;
     email: string;
-    role: string;
+    role: "customer" | "admin";
   } | null;
 }
 
