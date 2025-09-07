@@ -4,9 +4,11 @@ import {
   login,
   logout,
   registerUser,
+  updateEmailAddress,
   uploadAvatar,
 } from "../controllers/user";
 import {
+  emailUpdateValidator,
   loginValidator,
   registerValidator,
   uploadImageValidator,
@@ -29,5 +31,13 @@ router.post(
 );
 
 router.get("/me", protect, getUserInfo);
+
+router.post(
+  "/update-email",
+  emailUpdateValidator,
+  validateRequest,
+  protect,
+  updateEmailAddress
+);
 
 export default router;

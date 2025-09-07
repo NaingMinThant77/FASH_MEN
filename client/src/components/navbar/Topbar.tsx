@@ -1,8 +1,8 @@
 import { Link } from "react-router";
 import SearchBox from "../../common/SearchBox";
 import { LogIn, LogOut, ShoppingCart, User, User2Icon } from "lucide-react";
-import type { RootState } from "@/store";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,13 +12,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { clearUserInfo } from "@/store/slices/auth";
-import { useLogoutMutation } from "@/store/slices/userApi";
+import { useCurrentUserQuery, useLogoutMutation } from "@/store/slices/userApi";
 
 interface TopbarProps {
   toggleCart: () => void;
 }
 const Topbar = ({ toggleCart }: TopbarProps) => {
-  const userInfo = useSelector((state: RootState) => state.auth.userInfo);
+  // const userInfo = useSelector((state: RootState) => state.auth.userInfo);
+  const { data: userInfo } = useCurrentUserQuery();
   const dispatch = useDispatch();
   const [logoutMutation, { isLoading }] = useLogoutMutation();
 
@@ -46,9 +47,20 @@ const Topbar = ({ toggleCart }: TopbarProps) => {
                 <User />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>
+                <DropdownMenuLabel className="flex items-center gap-2">
+                  <Avatar className="w-10 h-10 ring-2 ring-gray-200 shadow-sm">
+                    <AvatarImage src={userInfo?.avatar?.[0].url} />
+                    <AvatarFallback className="text-lg font-bold bg-gray-100">
+                      {userInfo?.name.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="flex flex-col">
-                    <p className="font-bold text-blue-500">{userInfo.name}</p>
+                    <div className="flex items-center gap-1">
+                      <p className="font-bold text-blue-500">{userInfo.name}</p>
+                      <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-gray-200 text-gray-700">
+                        {userInfo?.role}
+                      </span>
+                    </div>
                     <p className="text-xs">{userInfo.email}</p>
                   </div>
                 </DropdownMenuLabel>

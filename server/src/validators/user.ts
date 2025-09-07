@@ -14,3 +14,7 @@ export const registerValidator = [
 export const uploadImageValidator = [
   body("image_url").notEmpty().withMessage("Image is required"),
 ];
+
+export const emailUpdateValidator = [
+  body("email").isEmail().withMessage("Email must be valid"),
+];

@@ -41,6 +41,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         url: "/me",
         method: "GET",
       }),
+      providesTags: ["User"],
     }),
     uploadAvatar: builder.mutation({
       query: (data: uploadAvatarInput) => ({
@@ -48,6 +49,15 @@ export const userApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["User"],
+    }),
+    emailUpdate: builder.mutation({
+      query: (data: { email: string }) => ({
+        url: "/update-email",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["User"],
     }),
   }),
 });
@@ -58,4 +68,5 @@ export const {
   useLogoutMutation,
   useCurrentUserQuery,
   useUploadAvatarMutation,
+  useEmailUpdateMutation,
 } = userApiSlice;
