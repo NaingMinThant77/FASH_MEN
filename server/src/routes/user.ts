@@ -4,6 +4,7 @@ import {
   login,
   logout,
   registerUser,
+  sendForgetPasswordEmail,
   updateEmailAddress,
   updateName,
   updatePassword,
@@ -59,5 +60,7 @@ router.post(
   protect,
   updatePassword
 );
+
+router.post("/forget-password", protect, sendForgetPasswordEmail);
 
 export default router;

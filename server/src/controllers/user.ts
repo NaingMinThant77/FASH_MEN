@@ -5,6 +5,8 @@ import generateToken from "../utils/generateToken";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { deleteImage, uploadSingleImage } from "../utils/cloudinary";
 import bcrypt from "bcryptjs";
+import { forgetPasswordEmailTemplate } from "../utils/emailTemplate";
+import { sendEmail } from "../utils/sendEmail";
 
 // @route POST | /api/register
 // @desc Register a new user
@@ -150,5 +152,38 @@ export const updatePassword = asyncHandler(
     existingUser.password = newPassword;
     await existingUser.save();
     res.status(200).json({ message: "Password updated successfully." });
+  }
+);
+
+// @route POST | /api/forget-password
+// @desc send emial to reset password
+// @access Private
+export const sendForgetPasswordEmail = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const { user } = req;
+    const existingUser = await User.findOne({ email: user?.email });
+    if (!existingUser) {
+      res.status(400);
+      throw new Error("User not found.");
+    }
+    const token = await existingUser.generatePasswordResetToken();
+    await existingUser.save();
+
+    const resetPasswordUrl = `${process.env.CLIENT_URL}/reset-password/${token}`;
+    const mailBody = forgetPasswordEmailTemplate(resetPasswordUrl);
+
+    try {
+      await sendEmail({
+        receiver_mail: user?.email!,
+        subject: "Reset Password - FASH_MEN",
+        body: mailBody,
+      });
+    } catch (error) {
+      existingUser.resetPasswordExpire = undefined;
+      existingUser.resetPasswordToken = undefined;
+      await existingUser.save();
+    }
+
+    res.status(200).json({ message: "ResetPassword Email sent successfully." });
   }
 );
