@@ -18,6 +18,7 @@ import EmailUpdateForm from "@/components/profile/EmailUpdateForm";
 import Loader from "@/components/Loader";
 import NameUpdateForm from "@/components/profile/NameUpdateForm";
 import PasswordUpdateForm from "@/components/profile/PasswordUpdateForm";
+import ResetPasswordForm from "@/components/profile/ResetPassword";
 
 const Profile = () => {
   const {
@@ -91,20 +92,20 @@ const Profile = () => {
                     {userInfo?.role}
                   </span>
                 </div>
-                <p className="text-gray-600">{userInfo?.email}</p>
+                <p className="text-gray-600 mb-2">{userInfo?.email}</p>
+                <ResetPasswordForm email={userInfo?.email ?? ""} />
               </div>
 
               {/* Avatar + Upload */}
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <Avatar className="w-28 h-28 ring-2 ring-gray-200 shadow-sm">
                   <AvatarImage
-                    src={avatar ?? userInfo?.avatar?.[0].url ?? ""}
+                    src={avatar ?? (userInfo?.avatar?.[0]?.url || "")}
+                    alt={userInfo?.name}
                   />
-                  {!userInfo?.avatar?.[0].url && (
-                    <AvatarFallback className="text-lg font-bold bg-gray-100">
-                      {userInfo?.name.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  )}
+                  <AvatarFallback className="text-lg font-bold bg-gray-100">
+                    {userInfo?.name?.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
 
                 <div className="flex md:flex-col items-center  gap-2">

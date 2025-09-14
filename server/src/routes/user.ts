@@ -4,6 +4,7 @@ import {
   login,
   logout,
   registerUser,
+  resetPassword,
   sendForgetPasswordEmail,
   updateEmailAddress,
   updateName,
@@ -11,11 +12,13 @@ import {
   uploadAvatar,
 } from "../controllers/user";
 import {
+  changePasswordValidator,
   emailUpdateValidator,
   loginValidator,
   nameUpdateValidator,
   passwordUpdateValidator,
   registerValidator,
+  resetPasswordValidator,
   uploadImageValidator,
 } from "../validators/user";
 import { validateRequest } from "../middlewares/validateRequest";
@@ -61,6 +64,18 @@ router.post(
   updatePassword
 );
 
-router.post("/forget-password", protect, sendForgetPasswordEmail);
+router.post(
+  "/forget-password",
+  resetPasswordValidator,
+  validateRequest,
+  sendForgetPasswordEmail
+);
+
+router.post(
+  "/reset-password/:token",
+  changePasswordValidator,
+  validateRequest,
+  resetPassword
+);
 
 export default router;

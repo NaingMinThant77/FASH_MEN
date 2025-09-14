@@ -49,7 +49,7 @@ const Topbar = ({ toggleCart }: TopbarProps) => {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel className="flex items-center gap-2">
                   <Avatar className="w-10 h-10 ring-2 ring-gray-200 shadow-sm">
-                    <AvatarImage src={userInfo?.avatar?.[0].url} />
+                    <AvatarImage src={userInfo?.avatar?.[0]?.url || ""} />
                     <AvatarFallback className="text-lg font-bold bg-gray-100">
                       {userInfo?.name.slice(0, 2).toUpperCase()}
                     </AvatarFallback>

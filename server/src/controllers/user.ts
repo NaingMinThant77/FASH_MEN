@@ -7,6 +7,7 @@ import { deleteImage, uploadSingleImage } from "../utils/cloudinary";
 import bcrypt from "bcryptjs";
 import { forgetPasswordEmailTemplate } from "../utils/emailTemplate";
 import { sendEmail } from "../utils/sendEmail";
+import crypto from "crypto";
 
 // @route POST | /api/register
 // @desc Register a new user
@@ -159,12 +160,13 @@ export const updatePassword = asyncHandler(
 // @desc send emial to reset password
 // @access Private
 export const sendForgetPasswordEmail = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const { user } = req;
-    const existingUser = await User.findOne({ email: user?.email });
+  async (req: Request, res: Response) => {
+    const { email } = req.body;
+
+    const existingUser = await User.findOne({ email });
     if (!existingUser) {
       res.status(400);
-      throw new Error("User not found.");
+      throw new Error("This email is not registered.");
     }
     const token = await existingUser.generatePasswordResetToken();
     await existingUser.save();
@@ -174,7 +176,7 @@ export const sendForgetPasswordEmail = asyncHandler(
 
     try {
       await sendEmail({
-        receiver_mail: user?.email!,
+        receiver_mail: existingUser.email!,
         subject: "Reset Password - FASH_MEN",
         body: mailBody,
       });
@@ -185,5 +187,31 @@ export const sendForgetPasswordEmail = asyncHandler(
     }
 
     res.status(200).json({ message: "ResetPassword Email sent successfully." });
+  }
+);
+
+// @route POST | /api/reset-password/:token
+// @desc change user's password
+// @access Private
+export const resetPassword = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+    if (!user) {
+      res.status(400);
+      throw new Error("Token is invalid or has been expired.");
+    }
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+    res.status(200).json({ message: "Password updated successfully." });
   }
 );

@@ -1,7 +1,10 @@
 import { useForm } from "react-hook-form";
-import { loginSchema, type LoginSchema } from "../schema/auth";
+import {
+  forgetPasswordSchema,
+  type ForgetPasswordSchema,
+} from "../schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,33 +15,29 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useLoginMutation } from "@/store/slices/userApi";
+import { useForgetPasswordMutation } from "@/store/slices/userApi";
 import { toast } from "sonner";
-import { useDispatch, useSelector } from "react-redux";
-import { setUserInfo } from "@/store/slices/auth";
+import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { useEffect } from "react";
 
-const Login = () => {
-  const [loginMutation, { isLoading, isError }] = useLoginMutation();
+const ForgetPassword = () => {
+  const [forgetPasswordMutation, { isLoading, isError }] =
+    useForgetPasswordMutation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
 
-  const form = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<ForgetPasswordSchema>({
+    resolver: zodResolver(forgetPasswordSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  const onSubmit = async (data: LoginSchema) => {
+  const onSubmit = async (data: ForgetPasswordSchema) => {
     try {
-      const res = await loginMutation(data).unwrap();
-      dispatch(setUserInfo(res));
-      form.reset();
-      toast.success("Login successfully");
+      const res = await forgetPasswordMutation(data).unwrap();
+      toast.success(res.message);
       navigate("/");
     } catch (error: unknown) {
       if (typeof error === "object" && error !== null && "data" in error) {
@@ -50,14 +49,6 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    if (userInfo) {
-      navigate("/");
-    }
-  }, [userInfo]);
-
-  console.log(isError);
-
   return (
     <section>
       <div className=" bg-gray-50 flex flex-col justify-center pt-12 pb-2 sm:px-6 lg:px-8">
@@ -68,16 +59,10 @@ const Login = () => {
             alt="Workflow"
           />{" "}
           <h2 className="mt-2 text-center text-3xl leading-9 font-extrabold text-gray-900">
-            Login to your account
+            Forget Password
           </h2>
           <p className="mt-2 text-center text-sm leading-5 text-gray-500 max-w">
-            Or
-            <Link
-              to={"/register"}
-              className="ml-2 font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:underline transition ease-in-out duration-150"
-            >
-              create a new account
-            </Link>
+            Enter your email to get password reset mail.
           </p>
         </div>
 
@@ -105,38 +90,15 @@ const Login = () => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="********"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full cursor-pointer mb-4"
+                  className="w-full cursor-pointer"
                 >
-                  {isLoading ? "Submitting..." : "Login"}
+                  Forget Password
                 </Button>
               </form>
             </Form>
-            <Link
-              to={"/forget-password"}
-              className="text-sm font-medium text-blue-500 underline"
-            >
-              Forget Password ?
-            </Link>
           </div>
         </div>
       </div>
@@ -144,4 +106,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgetPassword;
