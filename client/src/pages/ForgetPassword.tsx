@@ -17,15 +17,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { useForgetPasswordMutation } from "@/store/slices/userApi";
 import { toast } from "sonner";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/store";
-import { useEffect } from "react";
 
 const ForgetPassword = () => {
-  const [forgetPasswordMutation, { isLoading, isError }] =
-    useForgetPasswordMutation();
+  const [forgetPasswordMutation, { isLoading }] = useForgetPasswordMutation();
   const navigate = useNavigate();
-  const userInfo = useSelector((state: RootState) => state.auth.userInfo);
 
   const form = useForm<ForgetPasswordSchema>({
     resolver: zodResolver(forgetPasswordSchema),

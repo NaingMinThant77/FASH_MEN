@@ -117,3 +117,74 @@ export const deleteProduct = asyncHandler(
     });
   }
 );
+
+// @route GET | /api/products?keyword=t-shirt&maxPrice=100&minPrice=50
+// @desc Get all products with filters
+// @access Public
+export const getProductsWithFilters = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { keyword, category, minPrice, maxPrice, size, color, sortBy } =
+      req.query;
+
+    let query: any = {};
+    if (keyword) query.name = { $regex: keyword, $options: "i" };
+    if (category) query.category = category;
+
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
+
+    if (size) query.size = { $in: [size] };
+    if (color) query.color = { $in: [color] };
+
+    // Sorting
+    let sortOption: any = {};
+    if (sortBy === "price-asc") sortOption.price = 1; // key must be same with model
+    if (sortBy === "price-desc") sortOption.price = -1;
+    if (sortBy === "latest") sortOption.createdAt = -1;
+    if (sortBy === "rating") sortOption.rating_count = -1;
+
+    const products = await Product.find(query).sort(sortOption);
+    res.status(200).json(products);
+  }
+);
+
+// @route GET | /api/products/new
+// @desc Get all new products
+// @access Public
+export const getNewArrivalProducts = asyncHandler(
+  async (req: Request, res: Response) => {
+    const products = await Product.find({ is_new_arrival: true }).sort({
+      createdAt: -1,
+    });
+    res.status(200).json(products);
+  }
+);
+
+// @route GET | /api/products/featured
+// @desc Get all featured products
+// @access Public
+export const getFeaturedProducts = asyncHandler(
+  async (req: Request, res: Response) => {
+    const products = await Product.find({ is_feature: true });
+    res.status(200).json(products);
+  }
+);
+
+// @route GET | /api/products/:id
+// @desc Get a single product by Id
+// @access Public
+export const getProductById = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    if (product) {
+      res.status(200).json(product);
+    } else {
+      res.status(404);
+      throw new Error("Product not found.");
+    }
+  }
+);
