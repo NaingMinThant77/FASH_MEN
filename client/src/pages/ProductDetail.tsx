@@ -2,33 +2,9 @@ import { useParams } from "react-router";
 import RatingConverter from "../common/RatingConverter";
 import { useEffect, useState } from "react";
 import { Minus, Plus } from "lucide-react";
-
-const product = {
-  id: 1,
-  name: "Black T-shirt",
-  price: 100,
-  category: "T-shirt",
-  sizes: ["S", "M", "L", "XL"],
-  colors: ["red", "black", "blue"],
-  rating: 4,
-  description: `Experience premium sound quality and industry-leading noise
-              cancellation with these wireless headphones. Perfect htmlFor music
-              lovers and frequent travelers.`,
-  images: [
-    {
-      url: "https://picsum.photos/500/300?random=1",
-    },
-    {
-      url: "https://picsum.photos/500/300?random=2",
-    },
-    {
-      url: "https://picsum.photos/500/300?random=3",
-    },
-    {
-      url: "https://picsum.photos/500/300?random=4",
-    },
-  ],
-};
+import { useGetProductDetailQuery } from "@/store/slices/productApi";
+import Loader from "@/components/Loader";
+import type { Product, ProductImage } from "@/types/product";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -37,13 +13,19 @@ const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState<string>();
   const [quantity, setQuantity] = useState<number>(1);
 
+  const { data, isLoading } = useGetProductDetailQuery(id as string);
+  const product = data as Product;
+
   useEffect(() => {
-    if (product.images.length > 0) setSelectedImage(product.images[0].url);
-    if (product.colors.length > 0) setSelectedColor(product.colors[0]);
-    if (product.sizes.length > 0) setSelectedSize(product.sizes[0]);
+    if (product) {
+      if (product.images.length > 0) setSelectedImage(product.images[0].url);
+      if (product.colors.length > 0) setSelectedColor(product.colors[0]);
+      if (product.sizes.length > 0) setSelectedSize(product.sizes[0]);
+    }
   }, [product]);
 
-  if (!product) return <p>Product not found.</p>;
+  if (isLoading) return <Loader />;
+  if (!product) return <div>Product not found</div>;
 
   return (
     <div className="bg-gray-100">
@@ -53,11 +35,11 @@ const ProductDetail = () => {
             <img
               src={selectedImage}
               alt={selectedImage}
-              className="w-full h-auto rounded-lg shadow-md mb-4"
+              className="w-full h-[550px] object-full rounded-lg shadow-md mb-4"
               id="mainImage"
             />
             <div className="flex gap-4 py-4 justify-center overflow-x-auto">
-              {product.images.map((image, index) => (
+              {product.images.map((image: ProductImage, index: number) => (
                 <div
                   key={index}
                   className={`${
@@ -66,7 +48,6 @@ const ProductDetail = () => {
                   }`}
                 >
                   <img
-                    key={index}
                     src={image.url}
                     alt={image.url}
                     onClick={() => setSelectedImage(image.url)}
@@ -78,6 +59,9 @@ const ProductDetail = () => {
           </div>
 
           <div className="w-full md:w-1/2 px-4">
+            <p className="text-gray-600 mb-4">
+              Instock Count: {product.instock_count}
+            </p>
             <h2 className="text-3xl font-bold mb-2">{product.name}</h2>
             <p className="text-gray-600 mb-4">Category: {product.category}</p>
             <div className="mb-4">
@@ -125,7 +109,14 @@ const ProductDetail = () => {
               <div className="flex items-center gap-2">
                 <button
                   className="bg-black p-2 text-white rounded-md cursor-pointer"
-                  onClick={() => setQuantity((prev) => prev + 1)}
+                  onClick={() =>
+                    setQuantity((prev) => {
+                      if (prev === product.instock_count) {
+                        return product.instock_count;
+                      }
+                      return prev + 1;
+                    })
+                  }
                 >
                   <Plus className="w-4 h-4" />
                 </button>
