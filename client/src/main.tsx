@@ -15,6 +15,7 @@ import Profile from "./pages/Profile.tsx";
 import IsLogin from "./pages/isLogin.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import ForgetPassword from "./pages/ForgetPassword.tsx";
+import ProductFilter from "./pages/ProductFilter.tsx";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
       { path: "/reset-password/:id", element: <ResetPassword /> },
       { path: "/forget-password", element: <ForgetPassword /> },
       { path: "/products/:id", element: <ProductDetail /> },
+      { path: "/products/filter", element: <ProductFilter /> },
     ],
   },
 ]);

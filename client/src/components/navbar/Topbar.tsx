@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import SearchBox from "../../common/SearchBox";
-import { LogIn, LogOut, ShoppingCart, User, User2Icon } from "lucide-react";
+import { LogIn, LogOut, ShoppingCart, User2Icon } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -33,60 +33,90 @@ const Topbar = ({ toggleCart }: TopbarProps) => {
   };
 
   return (
-    <main className="text-white bg-black py-1">
-      <div className="flex justify-between items-center p-4 max-w-6xl mx-auto">
+    <header className="bg-black text-white shadow-md sticky top-0 z-50">
+      <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+        {/* Logo */}
         <Link to={"/"}>
-          <h2 className="font-extrabold text-3xl font-mono">FASH_MEN</h2>
+          <h2 className="font-extrabold text-3xl font-mono tracking-wider hover:text-gray-300 transition">
+            FASH_MEN
+          </h2>
         </Link>
-        <div className="flex gap-4">
+
+        {/* Right Section */}
+        <div className="flex items-center gap-6">
+          {/* Search */}
           <SearchBox />
-          <ShoppingCart onClick={toggleCart} className="cursor-pointer" />
+
+          {/* Cart */}
+          <div
+            onClick={toggleCart}
+            className="relative cursor-pointer hover:text-gray-300 transition"
+          >
+            <ShoppingCart className="w-6 h-6" />
+            {/* Example cart badge */}
+            <span className="absolute -top-2 -right-2 bg-red-500 text-xs font-bold text-white px-2 py-0.5 rounded-full">
+              2
+            </span>
+          </div>
+
+          {/* User */}
           {userInfo ? (
             <DropdownMenu>
               <DropdownMenuTrigger className="cursor-pointer">
-                <User />
+                <Avatar className="w-9 h-9 ring-2 ring-gray-300 shadow-sm hover:scale-105 transition">
+                  <AvatarImage src={userInfo?.avatar?.[0]?.url || ""} />
+                  <AvatarFallback className="bg-gray-200 text-black font-bold">
+                    {userInfo?.name.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel className="flex items-center gap-2">
+
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="flex items-center gap-3">
                   <Avatar className="w-10 h-10 ring-2 ring-gray-200 shadow-sm">
                     <AvatarImage src={userInfo?.avatar?.[0]?.url || ""} />
-                    <AvatarFallback className="text-lg font-bold bg-gray-100">
+                    <AvatarFallback className="bg-gray-200 text-black font-bold">
                       {userInfo?.name.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
-                    <div className="flex items-center gap-1">
-                      <p className="font-bold text-blue-500">{userInfo.name}</p>
-                      <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-gray-200 text-gray-700">
-                        {userInfo?.role}
-                      </span>
-                    </div>
-                    <p className="text-xs">{userInfo.email}</p>
+                    <span className="font-bold text-blue-500">
+                      {userInfo.name}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {userInfo.email}
+                    </span>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+
                 <DropdownMenuItem className="cursor-pointer">
-                  <User2Icon />
+                  <User2Icon className="mr-2 w-4 h-4" />
                   <Link to="/profile">Profile</Link>
                 </DropdownMenuItem>
+
                 <DropdownMenuItem
-                  className="cursor-pointer text-red-600"
+                  className="cursor-pointer text-red-600 focus:text-red-700"
                   onClick={logoutHandler}
                   disabled={isLoading}
                 >
-                  <LogOut className="text-red-600" />{" "}
+                  <LogOut className="mr-2 w-4 h-4 text-red-600" />
                   {isLoading ? "Logging out..." : "Logout"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link to="/login">
-              <LogIn className="cursor-pointer" />
+            <Link
+              to="/login"
+              className="flex items-center gap-1 text-gray-200 hover:text-white transition"
+            >
+              <LogIn className="w-6 h-6" />
+              <span className="hidden sm:inline font-medium">Login</span>
             </Link>
           )}
         </div>
       </div>
-    </main>
+    </header>
   );
 };
 
