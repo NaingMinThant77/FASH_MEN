@@ -4,18 +4,18 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
-const IsLogin = ({ children }: { children: React.ReactNode }) => {
+const IsAdmin = ({ children }: { children: React.ReactNode }) => {
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
   const navigate = useNavigate();
-  const { isError } = useCurrentUserQuery();
+  const { isError, data: user } = useCurrentUserQuery();
 
   useEffect(() => {
-    if (!userInfo || isError) {
-      navigate("/login");
+    if (!userInfo || isError || user?.role !== "admin") {
+      navigate("/");
     }
   }, [userInfo]);
 
   return <>{children}</>;
 };
 
-export default IsLogin;
+export default IsAdmin;

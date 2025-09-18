@@ -1,28 +1,37 @@
 import { Menu } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 
 const categories = [
-  "Shirt",
+  "T-Shirt",
   "Hoodie",
   "Jeans",
   "Pants",
   "Jacket",
-  "Shorts",
+  "Short",
   "Sports",
-  "Accessories",
+  "Shoe",
 ];
 
 const Secondarybar = () => {
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const activeCategory = searchParams.get("category");
 
   const handleClick = (category: string) => {
-    setActiveCategory(category);
-    navigate(
-      `/products/filter?category=${encodeURIComponent(category.toLowerCase())}`
-    );
+    const newParams = new URLSearchParams(searchParams);
+    const categoryLower = category.toLocaleLowerCase();
+    if (activeCategory === categoryLower) newParams.delete("category");
+    else {
+      newParams.set("category", categoryLower);
+    }
+
+    const newSearchQuery = newParams.toString();
+    const path = newSearchQuery
+      ? `/products/filter?${newSearchQuery}`
+      : "/products/filter";
+    navigate(path, { replace: true });
   };
+
   return (
     <main className="text-white bg-black/70 py-4">
       <div className="flex flex-col gap-4 justify-center items-center px-4 max-w-6xl mx-auto">
@@ -42,7 +51,7 @@ const Secondarybar = () => {
               onClick={() => handleClick(category)}
               className={`px-4 py-2 rounded-full cursor-pointer transition duration-300 
                 ${
-                  activeCategory === category
+                  activeCategory === category.toLocaleLowerCase()
                     ? "bg-white text-black shadow-md scale-105"
                     : "bg-white/10 hover:bg-white/20 hover:scale-105"
                 }`}

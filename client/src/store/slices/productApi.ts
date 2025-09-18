@@ -1,4 +1,4 @@
-import type { Product } from "@/types/product";
+import type { Product, ProductMeta } from "@/types/product";
 import { apiSlice } from "./api";
 
 export const productApiSlice = apiSlice.injectEndpoints({
@@ -14,8 +14,8 @@ export const productApiSlice = apiSlice.injectEndpoints({
     }),
     getProducts: builder.query({
       query: ({
-        size,
-        color,
+        sizes,
+        colors,
         minPrice,
         maxPrice,
         sortBy,
@@ -23,8 +23,16 @@ export const productApiSlice = apiSlice.injectEndpoints({
         category,
       }) => {
         const params = new URLSearchParams();
-        if (size) params.append("size", size);
-        if (color) params.append("color", color);
+        if (sizes && sizes.length > 0) {
+          sizes.forEach((size: string) => {
+            params.append("size", size);
+          });
+        }
+        if (colors && colors.length > 0) {
+          colors.forEach((color: string) => {
+            params.append("color", color);
+          });
+        }
         if (minPrice) params.append("minPrice", minPrice);
         if (maxPrice) params.append("maxPrice", maxPrice);
         if (sortBy) params.append("sortBy", sortBy);
@@ -32,6 +40,9 @@ export const productApiSlice = apiSlice.injectEndpoints({
         if (category) params.append("category", category);
         return `/products?${params.toString()}`;
       },
+    }),
+    getProductsMeta: builder.query<ProductMeta, string>({
+      query: () => `/products/filters/meta`,
     }),
   }),
 });
@@ -41,4 +52,5 @@ export const {
   useGetFeaturedQuery,
   useGetProductDetailQuery,
   useGetProductsQuery,
+  useGetProductsMetaQuery,
 } = productApiSlice;

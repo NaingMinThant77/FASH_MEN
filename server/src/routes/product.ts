@@ -5,6 +5,7 @@ import {
   getFeaturedProducts,
   getNewArrivalProducts,
   getProductById,
+  getProductsMeta,
   getProductsWithFilters,
   updateProduct,
 } from "../controllers/product";
@@ -32,5 +33,7 @@ router.get("/new", getNewArrivalProducts);
 router.get("/featured", getFeaturedProducts);
 
 router.get("/:id", getProductById);
+
+router.get("/filters/meta", getProductsMeta);
 
 export default router;

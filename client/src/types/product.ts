@@ -15,3 +15,20 @@ export interface Product {
   rating: number;
   images: ProductImage[];
 }
+
+export interface ProductMeta {
+  colors: string[];
+  sizes: string[];
+  maxPrice: number;
+  minPrice: number;
+}
+
+export interface ProductFilter {
+  keyword?: string;
+  category?: string;
+  minPrice?: string | null;
+  maxPrice?: string | null;
+  sizes?: string[];
+  colors?: string[];
+  sortBy?: string;
+}
