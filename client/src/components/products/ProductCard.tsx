@@ -13,7 +13,7 @@ const ProductCard = ({ id, name, price, image, ratingCount }: ProductCard) => {
   return (
     <Link
       to={`/products/${id}`}
-      className="bg-gray-200 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300"
+      className="bg-gray-200 text-center rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300"
     >
       <img
         src={image}
@@ -23,8 +23,10 @@ const ProductCard = ({ id, name, price, image, ratingCount }: ProductCard) => {
       <p className="font-medium mt-2">
         {name.length > 20 ? name.slice(0, 20) + "..." : name}
       </p>
-      <RatingConverter count={ratingCount} />
-      <p className="font-bold text-lg">${price}</p>
+      <div className="flex items-center justify-between px-3 mb-3">
+        <RatingConverter count={ratingCount} />
+        <p className="font-bold text-lg">${price}</p>
+      </div>
     </Link>
   );
 };

@@ -1,27 +1,45 @@
+import { upload } from "./../utils/upload";
 import { Request, Response } from "express";
 import asyncHandler from "../utils/asyncHandler";
 import { Product } from "../models/product";
 import { AuthRequest } from "../middlewares/authMiddleware";
+import { deleteImage, uploadSingleImage } from "../utils/cloudinary";
 
 // @route POST | /api/products/create
 // @desc Add New Product
 // @access Private
 export const createProduct = asyncHandler(
   async (req: AuthRequest, res: Response) => {
-    const {
-      name,
-      description,
-      price,
-      instock_count,
-      category,
-      sizes,
-      colors,
-      images,
-      is_new_arrival,
-      is_feature,
-      rating_count,
-      userId,
-    } = req.body;
+    const { name, description, category } = req.body;
+
+    const sizes = Array.isArray(req.body.sizes)
+      ? req.body.sizes
+      : [req.body.sizes];
+    const colors = Array.isArray(req.body.colors)
+      ? req.body.colors
+      : [req.body.colors];
+
+    const price = Number(req.body.price);
+    const instock_count = Number(req.body.instock_count);
+    const rating_count = Number(req.body.rating_count);
+
+    const is_feature = req.body.is_feature === "true";
+    const is_new_arrival = req.body.is_new_arrival === "true";
+
+    const images = req.files as Express.Multer.File[];
+
+    const uploadedImages = await Promise.all(
+      images.map(async (image) => {
+        const uploadImg = await uploadSingleImage(
+          `data:${image.mimetype};base64,${image.buffer.toString("base64")}`,
+          "fash.men/products"
+        );
+        return {
+          url: uploadImg.image_url,
+          public_alt: uploadImg.public_alt,
+        };
+      })
+    );
 
     const newProduct = await Product.create({
       name,
@@ -31,42 +49,46 @@ export const createProduct = asyncHandler(
       category,
       sizes,
       colors,
-      images,
-      is_new_arrival,
+      images: uploadedImages,
       is_feature,
+      is_new_arrival,
       rating_count,
       userId: req.user?._id,
     });
 
     if (newProduct) {
-      res.status(201).json({
-        message: `New product ${newProduct.name} created successfully.`,
-        data: newProduct,
-      });
+      res.status(201).json(newProduct);
     } else {
-      throw new Error("Failed to create product.");
+      throw new Error("Something went wrong");
     }
   }
 );
 
-// @route PUT | /api/products/update:id
+// @route PUT | /api/products/edit/:id
 // @desc Update an existing product
 // @access Private
 export const updateProduct = asyncHandler(
   async (req: AuthRequest, res: Response) => {
-    const {
-      name,
-      description,
-      price,
-      instock_count,
-      category,
-      sizes,
-      colors,
-      images,
-      is_new_arrival,
-      is_feature,
-      rating_count,
-    } = req.body;
+    const sizes = Array.isArray(req.body.sizes)
+      ? req.body.sizes
+      : [req.body.sizes];
+    const colors = Array.isArray(req.body.colors)
+      ? req.body.colors
+      : [req.body.colors];
+
+    const price = Number(req.body.price);
+    const instock_count = Number(req.body.instock_count);
+    const rating_count = Number(req.body.rating_count);
+
+    const is_feature = req.body.is_feature === "true";
+    const is_new_arrival = req.body.is_new_arrival === "true";
+
+    const { name, description, category, existingImages } = req.body;
+
+    // parse existing Images
+    const keepExistingImages = existingImages ? JSON.parse(existingImages) : [];
+
+    const newImages = req.files as Express.Multer.File[];
 
     const { id } = req.params;
     const existingProduct = await Product.findById(id);
@@ -74,6 +96,49 @@ export const updateProduct = asyncHandler(
       res.status(404);
       throw new Error("Product not found.");
     }
+
+    // find images to delete from cloudinary
+    const imagesToDelete = existingProduct.images.filter((existingImage) => {
+      return !keepExistingImages.some(
+        (keepImage: any) => keepImage.public_alt === existingImage.public_alt
+      );
+    });
+
+    if (imagesToDelete.length > 0) {
+      await Promise.all(
+        imagesToDelete.map(async (image) => {
+          if (image.public_alt) {
+            try {
+              await deleteImage(image.public_alt);
+            } catch (error) {
+              console.log(
+                `Failed to delete image - ${image.public_alt}`,
+                error
+              );
+            }
+          }
+        })
+      );
+    }
+
+    // upload new images
+    let uploadedNewImages: any[] = [];
+    if (newImages && newImages.length > 0) {
+      uploadedNewImages = await Promise.all(
+        newImages.map(async (image) => {
+          const uploadImg = await uploadSingleImage(
+            `data:${image.mimetype};base64,${image.buffer.toString("base64")}`,
+            "fash.men/products"
+          );
+          return {
+            url: uploadImg.image_url,
+            public_alt: uploadImg.public_alt,
+          };
+        })
+      );
+    }
+
+    const finalImages = [...keepExistingImages, ...uploadedNewImages];
 
     existingProduct.name = name || existingProduct.name;
     existingProduct.description = description || existingProduct.description;
@@ -83,7 +148,7 @@ export const updateProduct = asyncHandler(
     existingProduct.category = category || existingProduct.category;
     existingProduct.sizes = sizes || existingProduct.sizes;
     existingProduct.colors = colors || existingProduct.colors;
-    existingProduct.images = images || existingProduct.images;
+    existingProduct.images = finalImages;
     existingProduct.is_new_arrival =
       is_new_arrival || existingProduct.is_new_arrival;
     existingProduct.is_feature = is_feature || existingProduct.is_feature;

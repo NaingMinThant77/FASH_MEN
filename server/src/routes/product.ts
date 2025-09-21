@@ -10,20 +10,18 @@ import {
   updateProduct,
 } from "../controllers/product";
 import { isAdmin, protect } from "../middlewares/authMiddleware";
-import { createProductValidator } from "../validators/product";
-import { validateRequest } from "../middlewares/validateRequest";
+import { upload } from "../utils/upload";
 
 const router = Router();
 
-router.post(
-  "/create",
+router.post("/create", protect, isAdmin, upload.array("images"), createProduct);
+router.put(
+  "/edit/:id",
   protect,
   isAdmin,
-  createProductValidator,
-  validateRequest,
-  createProduct
+  upload.array("images"),
+  updateProduct
 );
-router.put("/update/:id", protect, isAdmin, updateProduct);
 router.delete("/:id", protect, isAdmin, deleteProduct);
 
 router.get("/", getProductsWithFilters);

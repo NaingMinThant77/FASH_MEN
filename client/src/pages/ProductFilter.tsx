@@ -10,6 +10,13 @@ import type {
 } from "@/types/product";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const ProductFilter = () => {
   const location = useLocation();
@@ -90,8 +97,8 @@ const ProductFilter = () => {
     }));
   };
 
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilters((prev) => ({ ...prev, sortBy: e.target.value }));
+  const handleSortChange = (value: string) => {
+    setFilters({ ...filters, sortBy: value === "default" ? "" : value });
   };
 
   const clearAllFilters = () => {
@@ -128,17 +135,18 @@ const ProductFilter = () => {
         {/* Sort By */}
         <div>
           <h3 className="text-lg font-semibold mb-2">Sort By</h3>
-          <select
-            value={filters.sortBy}
-            onChange={handleSortChange}
-            className="w-full border p-2 rounded-md focus:ring-2 focus:ring-pink-400"
-          >
-            <option value="">Default</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-            <option value="latest">Latest</option>
-            <option value="rating">Best Rated</option>
-          </select>
+          <Select value={filters.sortBy} onValueChange={handleSortChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="default">Default</SelectItem>
+              <SelectItem value="price-asc">Price: L to H</SelectItem>
+              <SelectItem value="price-desc">Price: H to L</SelectItem>
+              <SelectItem value="latest">Latest</SelectItem>
+              <SelectItem value="rating">Best Rated</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Colors */}

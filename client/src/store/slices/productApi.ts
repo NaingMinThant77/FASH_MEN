@@ -44,6 +44,22 @@ export const productApiSlice = apiSlice.injectEndpoints({
     getProductsMeta: builder.query<ProductMeta, string>({
       query: () => `/products/filters/meta`,
     }),
+    createProduct: builder.mutation<Product, FormData>({
+      query: (data) => ({
+        url: "/products/create",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Product"],
+    }),
+    editProduct: builder.mutation<Product, { id: string; formData: FormData }>({
+      query: (data) => ({
+        url: `/products/edit/${data.id}`,
+        method: "PUT",
+        body: data.formData,
+      }),
+      invalidatesTags: ["Product"],
+    }),
   }),
 });
 
@@ -53,4 +69,6 @@ export const {
   useGetProductDetailQuery,
   useGetProductsQuery,
   useGetProductsMetaQuery,
+  useCreateProductMutation,
+  useEditProductMutation,
 } = productApiSlice;

@@ -12,7 +12,7 @@ export interface Product {
   instock_count: number;
   sizes: string[];
   colors: string[];
-  rating: number;
+  rating_count: number;
   images: ProductImage[];
 }
 

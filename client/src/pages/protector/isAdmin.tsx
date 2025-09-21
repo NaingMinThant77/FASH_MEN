@@ -7,13 +7,14 @@ import { useNavigate } from "react-router";
 const IsAdmin = ({ children }: { children: React.ReactNode }) => {
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
   const navigate = useNavigate();
-  const { isError, data: user } = useCurrentUserQuery();
+  const { isError, data: user, isLoading } = useCurrentUserQuery();
 
   useEffect(() => {
+    if (isLoading) return;
     if (!userInfo || isError || user?.role !== "admin") {
       navigate("/");
     }
-  }, [userInfo]);
+  }, [userInfo, isError, user, navigate]);
 
   return <>{children}</>;
 };

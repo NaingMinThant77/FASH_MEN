@@ -68,9 +68,9 @@ const ProductDetail = () => {
               <span className="text-2xl font-bold mr-2">${product.price}</span>
             </div>
             <div className="flex items-center mb-4">
-              <RatingConverter count={product.rating} />
+              <RatingConverter count={product.rating_count} />
             </div>
-            <p className="text-gray-700 mb-6">{product.description}</p>
+            <div dangerouslySetInnerHTML={{ __html: product.description }} />
 
             <hr className="mt-4 text-gray-300" />
             <h2 className="text-xl font-bold my-2">Colors</h2>
