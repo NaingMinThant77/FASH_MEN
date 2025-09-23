@@ -250,7 +250,7 @@ const ProductFilter = () => {
                     name={product.name}
                     price={product.price}
                     image={product.images[0]?.url}
-                    ratingCount={product.rating}
+                    ratingCount={product.rating_count}
                   />
                 </div>
               ))}

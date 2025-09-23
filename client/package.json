@@ -19,6 +19,7 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@reduxjs/toolkit": "^2.9.0",
     "@tailwindcss/vite": "^4.1.12",
+    "@tanstack/react-table": "^8.21.3",
     "@tiptap/extension-heading": "^3.4.4",
     "@tiptap/extension-list": "^3.4.4",
     "@tiptap/pm": "^3.4.4",

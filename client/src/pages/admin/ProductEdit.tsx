@@ -60,7 +60,7 @@ const ProductEdit = () => {
         formData,
       }).unwrap();
       toast.success("Product updated successfully");
-      navigate("/");
+      navigate("/admin/manage-products");
     } catch (error) {
       console.log(error);
       toast.error("Failed to edit product");

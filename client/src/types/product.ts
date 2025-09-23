@@ -14,6 +14,7 @@ export interface Product {
   colors: string[];
   rating_count: number;
   images: ProductImage[];
+  createdAt: string | Date;
 }
 
 export interface ProductMeta {

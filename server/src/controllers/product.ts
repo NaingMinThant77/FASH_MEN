@@ -164,22 +164,42 @@ export const updateProduct = asyncHandler(
   }
 );
 
-// @route Delete | /api/products/:id
-// @desc Delete an existing product
-// @access Private
+// @route DELETE | api/products/:id
+// @desc Delete an existing product.
+// @access Private/Admin
 export const deleteProduct = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
+  async (req: Request, res: Response) => {
     const { id } = req.params;
+
     const existingProduct = await Product.findById(id);
+
     if (!existingProduct) {
       res.status(404);
-      throw new Error("Not Product found with that id.");
+      throw new Error("No product found with is id.");
     }
 
-    await existingProduct.deleteOne();
-    res.status(204).json({
-      message: `Product deleted successfully.`,
-    });
+    const imagesToDeleteWihPublicAltOnly = existingProduct.images.map(
+      (img) => img.public_alt
+    );
+
+    try {
+      await existingProduct.deleteOne();
+
+      if (imagesToDeleteWihPublicAltOnly.length > 0) {
+        Promise.all(
+          imagesToDeleteWihPublicAltOnly.map(async (alt) => {
+            try {
+              await deleteImage(alt);
+            } catch (error) {
+              console.log("Failed to delete image" + alt, error);
+            }
+          })
+        );
+      }
+      res.status(200).json({ message: "Product destory!" });
+    } catch (error) {
+      throw new Error("Failed to delete product");
+    }
   }
 );
 

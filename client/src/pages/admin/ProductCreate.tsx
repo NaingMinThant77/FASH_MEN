@@ -34,7 +34,7 @@ const ProductCreate = () => {
 
       await createProduct(formData).unwrap();
       toast.success("Product created successfully");
-      navigate("/");
+      navigate("/admin/manage-products");
     } catch (error: unknown) {
       if (typeof error === "object" && error !== null && "data" in error) {
         const err = error as {
