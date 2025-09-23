@@ -40,13 +40,9 @@ const Login = () => {
       form.reset();
       toast.success("Login successfully");
       navigate("/");
-    } catch (error: unknown) {
-      if (typeof error === "object" && error !== null && "data" in error) {
-        const err = error as { data: { message: string } };
-        toast.error(err.data.message);
-      } else {
-        toast.error("Something went wrong");
-      }
+    } catch (error) {
+      console.log("error", error);
+      toast.error("Fail to Login");
     }
   };
 

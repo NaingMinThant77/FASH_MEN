@@ -35,6 +35,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         url: "/logout",
         method: "POST",
       }),
+      invalidatesTags: ["User"],
     }),
     currentUser: builder.query<User, void>({
       query: () => ({

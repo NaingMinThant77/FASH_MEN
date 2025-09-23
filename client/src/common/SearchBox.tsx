@@ -39,24 +39,25 @@ const SearchBox = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-40 md:w-72">
       <form onSubmit={handleSearch}>
         <input
           type="text"
           value={keyword}
           onChange={handleInputChange}
-          className="bg-white focus:outline-none py-1 ps-2 text-black text-sm rounded-2xl"
+          placeholder="Search products..."
+          className="w-full bg-white border border-gray-300 rounded-full py-2 pl-3 pr-4 text-sm text-black focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
         <Search
           onClick={handleSearch}
-          className={`absolute top-1 ${
-            keyword ? "right-6" : "right-1"
-          }  text-black cursor-pointer w-5 h-5 `}
+          className={`absolute top-2.5 ${
+            keyword ? "right-8" : "right-3"
+          } text-gray-600 hover:text-black cursor-pointer w-5 h-5`}
         />
         {keyword && (
           <X
             onClick={handleClear}
-            className="absolute top-1 right-1 text-red-600 cursor-pointer w-5 h-5"
+            className="absolute top-2.5 right-3 text-red-500 hover:text-red-600 cursor-pointer w-5 h-5"
           />
         )}
       </form>

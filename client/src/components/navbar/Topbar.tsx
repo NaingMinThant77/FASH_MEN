@@ -1,7 +1,7 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import SearchBox from "../../common/SearchBox";
-import { LogIn, LogOut, ShoppingCart, User2Icon } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { LogIn, LogOut, ShoppingCart, User2Icon, UserCog } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -12,21 +12,42 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { clearUserInfo } from "@/store/slices/auth";
-import { useCurrentUserQuery, useLogoutMutation } from "@/store/slices/userApi";
+import {
+  useCurrentUserQuery,
+  useLogoutMutation,
+  userApiSlice,
+} from "@/store/slices/userApi";
+import { useEffect } from "react";
+import type { RootState } from "@/store";
 
 interface TopbarProps {
   toggleCart: () => void;
 }
 const Topbar = ({ toggleCart }: TopbarProps) => {
-  // const userInfo = useSelector((state: RootState) => state.auth.userInfo);
-  const { data: userInfo } = useCurrentUserQuery();
+  const usersData = useSelector((state: RootState) => state.auth.userInfo);
+  const { data: userInfo, isError, refetch } = useCurrentUserQuery();
   const dispatch = useDispatch();
   const [logoutMutation, { isLoading }] = useLogoutMutation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (usersData) {
+      refetch();
+    }
+  }, [usersData, refetch]);
+
+  useEffect(() => {
+    if (isError) {
+      dispatch(clearUserInfo());
+      navigate("/");
+    }
+  }, [isError]);
 
   const logoutHandler = async () => {
     try {
       await logoutMutation({});
       dispatch(clearUserInfo());
+      dispatch(userApiSlice.util.resetApiState());
     } catch (error) {
       console.log(error);
     }
@@ -37,13 +58,13 @@ const Topbar = ({ toggleCart }: TopbarProps) => {
       <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
         {/* Logo */}
         <Link to={"/"}>
-          <h2 className="font-extrabold text-3xl font-mono tracking-wider hover:text-gray-300 transition">
+          <h2 className="font-extrabold text-xl md:text-2xl font-mono tracking-wider hover:text-gray-300 transition">
             FASH_MEN
           </h2>
         </Link>
 
         {/* Right Section */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
           {/* Search */}
           <SearchBox />
 
@@ -60,7 +81,7 @@ const Topbar = ({ toggleCart }: TopbarProps) => {
           </div>
 
           {/* User */}
-          {userInfo ? (
+          {usersData ? (
             <DropdownMenu>
               <DropdownMenuTrigger className="cursor-pointer">
                 <Avatar className="w-9 h-9 ring-2 ring-gray-300 shadow-sm hover:scale-105 transition">
@@ -81,18 +102,20 @@ const Topbar = ({ toggleCart }: TopbarProps) => {
                   </Avatar>
                   <div className="flex flex-col">
                     <span className="font-bold text-blue-500">
-                      {userInfo.name}
+                      {userInfo?.name}
                     </span>
                     <span className="text-xs text-gray-500">
-                      {userInfo.email}
+                      {userInfo?.email}
                     </span>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem className="cursor-pointer">
-                  <User2Icon className="mr-2 w-4 h-4" />
-                  <Link to="/profile">Profile</Link>
+                <DropdownMenuItem asChild>
+                  <Link to="/profile" className="flex items-center">
+                    <User2Icon className="mr-2 w-4 h-4" />
+                    Profile
+                  </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
@@ -112,6 +135,17 @@ const Topbar = ({ toggleCart }: TopbarProps) => {
             >
               <LogIn className="w-6 h-6" />
               <span className="hidden sm:inline font-medium">Login</span>
+            </Link>
+          )}
+
+          {/* Admin Shortcut */}
+          {userInfo?.role === "admin" && (
+            <Link
+              to="/admin"
+              className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-3 py-2 rounded-lg flex items-center gap-1 transition"
+            >
+              <UserCog className="w-4 h-4" />
+              <span className="hidden sm:inline">Admin</span>
             </Link>
           )}
         </div>

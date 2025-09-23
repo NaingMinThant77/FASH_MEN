@@ -69,14 +69,14 @@ function ProductTable({ data }: ProductTableProps) {
   return (
     <>
       <div className="flex items-center  mb-6 justify-between">
-        <div className="flex items-center">
+        <div className="flex items-center w-72 lg:w-96">
           <Input
             placeholder="Filter products..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
             }
-            className="w-lg"
+            className="w-full"
           />
         </div>
         <DropdownMenu>
