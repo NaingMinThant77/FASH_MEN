@@ -1,5 +1,7 @@
 import ProductStatusCard from "@/components/admin/ProductStatusCard";
+import OrderTable from "@/components/products/OrderTable";
 import ProductChart from "@/components/products/ProductChart";
+import RecentProduct from "@/components/products/RecentProduct";
 import { useGetProductsQuery } from "@/store/slices/productApi";
 import type { Product } from "@/types/product";
 
@@ -46,6 +48,10 @@ const Dashboard = () => {
       <div className="mb-4">
         <h2 className="text-2xl font-bold mb-4">Product Chart</h2>
         <ProductChart data={products} />
+        <div className="mt-6 flex flex-col lg:flex-row gap-6">
+          <RecentProduct data={products} />
+          <OrderTable />
+        </div>
       </div>
     </section>
   );
