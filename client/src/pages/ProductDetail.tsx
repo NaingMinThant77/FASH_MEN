@@ -1,3 +1,19 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { useParams } from "react-router";
 import RatingConverter from "../common/RatingConverter";
 import { useEffect, useState } from "react";
@@ -5,6 +21,9 @@ import { Minus, Plus } from "lucide-react";
 import { useGetProductDetailQuery } from "@/store/slices/productApi";
 import Loader from "@/components/Loader";
 import type { Product, ProductImage } from "@/types/product";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/store/slices/cart";
+import { toast } from "sonner";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -12,6 +31,8 @@ const ProductDetail = () => {
   const [selectedColor, setSelectedColor] = useState<string>();
   const [selectedSize, setSelectedSize] = useState<string>();
   const [quantity, setQuantity] = useState<number>(1);
+
+  const dispatch = useDispatch();
 
   const { data, isLoading } = useGetProductDetailQuery(id as string);
   const product = data as Product;
@@ -26,6 +47,21 @@ const ProductDetail = () => {
 
   if (isLoading) return <Loader />;
   if (!product) return <div>Product not found</div>;
+
+  const addToCartHandler = () => {
+    toast.success("Product is added to cart.");
+    dispatch(
+      addToCart({
+        productId: product._id,
+        name: product.name,
+        price: product.price,
+        size: selectedSize,
+        color: selectedColor,
+        image: selectedImage,
+        quantity: quantity,
+      })
+    );
+  };
 
   return (
     <div className="bg-gray-100">
@@ -135,7 +171,10 @@ const ProductDetail = () => {
                   <Minus className="w-4 h-4" />
                 </button>
               </div>
-              <button className="w-full text-center py-2 bg-black text-sm font-medium text-white rounded-full">
+              <button
+                className="w-full text-center py-2 bg-black text-sm font-medium text-white rounded-full"
+                onClick={addToCartHandler}
+              >
                 Add to cart
               </button>
             </div>

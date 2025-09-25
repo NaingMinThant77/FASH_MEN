@@ -19,16 +19,15 @@ import {
 } from "@/store/slices/userApi";
 import { useEffect } from "react";
 import type { RootState } from "@/store";
+import { openCart } from "@/store/slices/cart";
 
-interface TopbarProps {
-  toggleCart: () => void;
-}
-const Topbar = ({ toggleCart }: TopbarProps) => {
+const Topbar = () => {
   const usersData = useSelector((state: RootState) => state.auth.userInfo);
   const { data: userInfo, isError, refetch } = useCurrentUserQuery();
   const dispatch = useDispatch();
   const [logoutMutation, { isLoading }] = useLogoutMutation();
   const navigate = useNavigate();
+  const products = useSelector((state: RootState) => state.cart.items);
 
   useEffect(() => {
     if (usersData) {
@@ -70,13 +69,13 @@ const Topbar = ({ toggleCart }: TopbarProps) => {
 
           {/* Cart */}
           <div
-            onClick={toggleCart}
+            onClick={() => dispatch(openCart())}
             className="relative cursor-pointer hover:text-gray-300 transition"
           >
             <ShoppingCart className="w-6 h-6" />
             {/* Example cart badge */}
             <span className="absolute -top-2 -right-2 bg-red-500 text-xs font-bold text-white px-2 py-0.5 rounded-full">
-              2
+              {products.length}
             </span>
           </div>
 
