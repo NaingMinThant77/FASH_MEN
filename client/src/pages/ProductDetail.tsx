@@ -1,19 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { useParams } from "react-router";
 import RatingConverter from "../common/RatingConverter";
 import { useEffect, useState } from "react";

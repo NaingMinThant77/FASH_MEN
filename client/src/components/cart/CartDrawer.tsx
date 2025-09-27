@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { clearCart, closeCart } from "@/store/slices/cart";
 import { Button } from "../ui/button";
+import { useCreateCheckOutSessionMutation } from "@/store/slices/orderApi";
+import { useNavigate } from "react-router";
 
 // const products = [
 //   {
@@ -98,6 +100,28 @@ const CartDrawer = () => {
   const dispatch = useDispatch();
   const isCartOpen = useSelector((state: RootState) => state.cart.isCartOpen);
 
+  const usersData = useSelector((state: RootState) => state.auth.userInfo);
+  const navigate = useNavigate();
+
+  const [createCheckoutSession, { isLoading }] =
+    useCreateCheckOutSessionMutation();
+  const bill = products.reduce(
+    (sum, item) => sum + Number(item.price) * item.quantity,
+    0
+  );
+
+  const checkoutHandler = async () => {
+    try {
+      const { url } = await createCheckoutSession({
+        items: products,
+        bill,
+      }).unwrap();
+      window.location.href = url;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <section
       className={`bg-gray-300 fixed top-0 right-0 w-2/3 md:w-1/2 lg:w-1/3 h-full transform transition-transform ease-in-out duration-300 z-50 p-4 ${
@@ -158,10 +182,26 @@ const CartDrawer = () => {
           </div>
         )}
       </div>
-      {products.length > 0 && (
-        <button className="bg-black text-white px-4 py-2 rounded-md mt-4 w-full ">
-          Go to Checkout
-        </button>
+
+      {!usersData ? (
+        <div className="mt-4 flex items-center gap-4">
+          <button
+            className="w-full text-center py-2 bg-black text-sm font-medium text-white rounded-full"
+            onClick={() => navigate("/login")}
+          >
+            Login to add to cart
+          </button>
+        </div>
+      ) : (
+        products.length > 0 && (
+          <button
+            onClick={checkoutHandler}
+            disabled={isLoading}
+            className="bg-black text-white px-4 py-2 rounded-md mt-4 w-full "
+          >
+            Go to Checkout
+          </button>
+        )
       )}
     </section>
   );

@@ -6,11 +6,11 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Badge } from "../ui/badge";
-// import { useGetAllOrdersQuery } from "@/store/slices/orderApi";
-import { FAKE_ORDERS as data } from "@/lib/FakeOrder";
+import { useGetAllOrdersQuery } from "@/store/slices/orderApi";
+// import { FAKE_ORDERS as data } from "@/lib/FakeOrder";
 
 function OrderTable() {
-  //   const { data } = useGetAllOrdersQuery(undefined);
+  const { data } = useGetAllOrdersQuery(undefined);
 
   return (
     <div className="flex-1">
@@ -31,7 +31,7 @@ function OrderTable() {
             </thead>
             <tbody>
               {data?.map((order) => (
-                <tr key={order.id}>
+                <tr key={order._id}>
                   <td className="p-2">{order.customer}</td>
 
                   <td className="p-2 text-center">
@@ -44,7 +44,7 @@ function OrderTable() {
                     </Badge>
                   </td>
                   <td className="p-2 text-center">
-                    {new Date(order.createdAt).toLocaleTimeString()}
+                    {new Date(order.createdAt).toLocaleDateString()}
                   </td>
                   <td className="p-2 text-right">${order.bill.toFixed(2)}</td>
                 </tr>

@@ -11,6 +11,8 @@ import {
 } from "../controllers/product";
 import { isAdmin, protect } from "../middlewares/authMiddleware";
 import { upload } from "../utils/upload";
+import { deleteProductValidator } from "../validators/product";
+import { validateRequest } from "../middlewares/validateRequest";
 
 const router = Router();
 
@@ -22,7 +24,14 @@ router.put(
   upload.array("images"),
   updateProduct
 );
-router.delete("/:id", protect, isAdmin, deleteProduct);
+router.delete(
+  "/:id",
+  protect,
+  isAdmin,
+  deleteProductValidator,
+  validateRequest,
+  deleteProduct
+);
 
 router.get("/", getProductsWithFilters);
 

@@ -1,4 +1,4 @@
-import { ChartLine, Package, PackagePlus, UserCog } from "lucide-react";
+import { ChartLine, Edit, Package, PackagePlus, UserCog } from "lucide-react";
 import type React from "react";
 import { NavLink } from "react-router";
 
@@ -28,6 +28,11 @@ const pages: Page[] = [
     name: "Manage User",
     path: "/admin/manage-users",
     icon: <UserCog className="w-5 h-5" />,
+  },
+  {
+    name: "Order management",
+    path: "/admin/manage-orders",
+    icon: <Edit className="w-6 h-6" />,
   },
 ];
 

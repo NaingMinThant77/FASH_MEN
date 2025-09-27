@@ -3,15 +3,16 @@ export type OrderItem = {
   name: string;
   quantity: number;
   price: number;
-  image: string;
+  size: string;
+  color: string;
 };
 
 export type Order = {
-  id: string;
+  _id: string;
   userId: string;
   items: OrderItem[];
   bill: number;
-  status: "pending" | "paid" | "delivered" | "cancelled";
+  status: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
   createdAt: string;
   updatedAt: string;
   customer: string;

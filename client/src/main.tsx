@@ -24,6 +24,10 @@ import ProductManagement from "./pages/admin/ProductManagement.tsx";
 import UserManagement from "./pages/admin/UserManagement.tsx";
 import Dashboard from "./pages/admin/Dashboard.tsx";
 import { PersistGate } from "redux-persist/integration/react";
+import ConfirmOrder from "./pages/order/ConfirmOrder.tsx";
+import Cancelled from "./pages/order/Cancelled.tsx";
+import OrderTablePage from "./pages/order/OrderTablePage.tsx";
+import OrderManagement from "./pages/admin/OrderManagement.tsx";
 
 const router = createBrowserRouter([
   {
@@ -61,7 +65,27 @@ const router = createBrowserRouter([
           { path: "edit-product/:id", element: <ProductEdit /> },
           { path: "manage-products", element: <ProductManagement /> },
           { path: "manage-users", element: <UserManagement /> },
+          {
+            path: "manage-orders",
+            element: <OrderManagement />,
+          },
         ],
+      },
+      {
+        path: "/order-success",
+        element: <ConfirmOrder />,
+      },
+      {
+        path: "/order-cancelled",
+        element: <Cancelled />,
+      },
+      {
+        path: "/orders",
+        element: (
+          <IsLogin>
+            <OrderTablePage />
+          </IsLogin>
+        ),
       },
     ],
   },
