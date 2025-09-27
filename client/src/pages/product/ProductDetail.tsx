@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import RatingConverter from "../common/RatingConverter";
+import RatingConverter from "../../common/RatingConverter";
 import { useEffect, useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { useGetProductDetailQuery } from "@/store/slices/productApi";

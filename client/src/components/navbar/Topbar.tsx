@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router";
 import SearchBox from "../../common/SearchBox";
 import {
   Import,
+  ListOrdered,
   LogIn,
   LogOut,
   ShoppingCart,
@@ -122,6 +123,13 @@ const Topbar = () => {
                     <Link to="/profile" className="flex items-center">
                       <User2Icon className="mr-2 w-4 h-4" />
                       Profile
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link to="/orders" className="flex items-center">
+                      <ListOrdered className="mr-2 w-4 h-4" />
+                      Orders
                     </Link>
                   </DropdownMenuItem>
 

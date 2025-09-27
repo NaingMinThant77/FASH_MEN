@@ -1,10 +1,7 @@
 import { useForm } from "react-hook-form";
-import {
-  forgetPasswordSchema,
-  type ForgetPasswordSchema,
-} from "../schema/auth";
+import { registerSchema, type RegisterSchema } from "../../schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,25 +12,32 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useForgetPasswordMutation } from "@/store/slices/userApi";
+import { useRegisterMutation } from "@/store/slices/userApi";
 import { toast } from "sonner";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
+import { useEffect } from "react";
 
-const ForgetPassword = () => {
-  const [forgetPasswordMutation, { isLoading }] = useForgetPasswordMutation();
+const Register = () => {
+  const [registerMutation, { isLoading, isError }] = useRegisterMutation();
   const navigate = useNavigate();
+  const userInfo = useSelector((state: RootState) => state.auth.userInfo);
 
-  const form = useForm<ForgetPasswordSchema>({
-    resolver: zodResolver(forgetPasswordSchema),
+  const form = useForm<RegisterSchema>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
+      name: "",
       email: "",
+      password: "",
     },
   });
 
-  const onSubmit = async (data: ForgetPasswordSchema) => {
+  const onSubmit = async (data: RegisterSchema) => {
     try {
-      const res = await forgetPasswordMutation(data).unwrap();
-      toast.success(res.message);
-      navigate("/");
+      await registerMutation(data).unwrap();
+      form.reset();
+      toast.success("Account created successfully");
+      navigate("/login");
     } catch (error: unknown) {
       if (typeof error === "object" && error !== null && "data" in error) {
         const err = error as { data: { message: string } };
@@ -43,6 +47,14 @@ const ForgetPassword = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [userInfo]);
+
+  console.log(isError);
 
   return (
     <section>
@@ -54,10 +66,16 @@ const ForgetPassword = () => {
             alt="Workflow"
           />{" "}
           <h2 className="mt-2 text-center text-3xl leading-9 font-extrabold text-gray-900">
-            Forget Password
+            Create a new account
           </h2>
           <p className="mt-2 text-center text-sm leading-5 text-gray-500 max-w">
-            Enter your email to get password reset mail.
+            Or
+            <Link
+              to={"/login"}
+              className="ml-2 font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:underline transition ease-in-out duration-150"
+            >
+              login to your account
+            </Link>
           </p>
         </div>
 
@@ -68,6 +86,19 @@ const ForgetPassword = () => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-8"
               >
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input type="text" placeholder="John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="email"
@@ -85,12 +116,29 @@ const ForgetPassword = () => {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="********"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <Button
                   type="submit"
                   disabled={isLoading}
                   className="w-full cursor-pointer"
                 >
-                  Forget Password
+                  {isLoading ? "Submitting..." : "Register"}
                 </Button>
               </form>
             </Form>
@@ -101,4 +149,4 @@ const ForgetPassword = () => {
   );
 };
 
-export default ForgetPassword;
+export default Register;

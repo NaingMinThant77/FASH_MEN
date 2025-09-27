@@ -2,7 +2,7 @@ import {
   useGetFeaturedQuery,
   useGetNewArrivalsQuery,
 } from "@/store/slices/productApi";
-import ProductList from "../components/products/ProductList";
+import ProductList from "../../components/products/ProductList";
 
 const Home = () => {
   const { data: newArrivals = [] } = useGetNewArrivalsQuery(undefined);

@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { loginSchema, type LoginSchema } from "../schema/auth";
+import { loginSchema, type LoginSchema } from "../../schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
