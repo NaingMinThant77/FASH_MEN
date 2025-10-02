@@ -247,10 +247,22 @@ export const getProductsWithFilters = asyncHandler(
 // @access Public
 export const getNewArrivalProducts = asyncHandler(
   async (req: Request, res: Response) => {
-    const products = await Product.find({ is_new_arrival: true }).sort({
-      createdAt: -1,
-    });
-    res.status(200).json(products);
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 4;
+    const skip = (page - 1) * limit;
+
+    const products = await Product.find({ is_new_arrival: true })
+      .sort({
+        createdAt: -1,
+      })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Product.countDocuments({ is_new_arrival: true });
+
+    res
+      .status(200)
+      .json({ products, total, page, pages: Math.ceil(total / limit) });
   }
 );
 
@@ -259,8 +271,18 @@ export const getNewArrivalProducts = asyncHandler(
 // @access Public
 export const getFeaturedProducts = asyncHandler(
   async (req: Request, res: Response) => {
-    const products = await Product.find({ is_feature: true });
-    res.status(200).json(products);
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 4;
+    const skip = (page - 1) * limit;
+
+    const products = await Product.find({ is_feature: true })
+      .skip(skip)
+      .limit(limit);
+    const total = await Product.countDocuments({ is_feature: true });
+
+    res
+      .status(200)
+      .json({ products, total, page, pages: Math.ceil(total / limit) });
   }
 );
 

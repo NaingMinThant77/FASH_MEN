@@ -1,14 +1,28 @@
 import type { Product, ProductMeta } from "@/types/product";
 import { apiSlice } from "./api";
 
+type PaginationReturn = {
+  products: Product[];
+  total: number;
+  page: number;
+  pages: number;
+};
+
+type PaginationRequest = {
+  page: number;
+  limit?: number;
+};
+
 export const productApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getNewArrivals: builder.query({
-      query: () => "/products/new",
+    getNewArrivals: builder.query<PaginationReturn, PaginationRequest>({
+      query: ({ page, limit = 4 }) =>
+        `/products/new?page=${page}&limit=${limit}`,
       providesTags: ["Product"],
     }),
-    getFeatured: builder.query({
-      query: () => "/products/featured",
+    getFeatured: builder.query<PaginationReturn, PaginationRequest>({
+      query: ({ page, limit = 4 }) =>
+        `/products/featured?page=${page}&limit=${limit}`,
       providesTags: ["Product"],
     }),
     getProductDetail: builder.query<Product, string>({
