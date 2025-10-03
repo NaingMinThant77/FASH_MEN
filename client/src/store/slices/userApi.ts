@@ -92,6 +92,12 @@ export const userApiSlice = apiSlice.injectEndpoints({
         },
       }),
     }),
+    getAllUsers: builder.query<User[], void>({
+      query: () => ({
+        url: "/users",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -106,4 +112,5 @@ export const {
   usePasswordUpdateMutation,
   useForgetPasswordMutation,
   useResetPasswordMutation,
+  useGetAllUsersQuery,
 } = userApiSlice;

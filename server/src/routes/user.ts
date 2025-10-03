@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getAllUsers,
   getUserInfo,
   login,
   logout,
@@ -22,7 +23,7 @@ import {
   uploadImageValidator,
 } from "../validators/user";
 import { validateRequest } from "../middlewares/validateRequest";
-import { protect } from "../middlewares/authMiddleware";
+import { isAdmin, protect } from "../middlewares/authMiddleware";
 
 const router = Router();
 
@@ -77,5 +78,7 @@ router.post(
   validateRequest,
   resetPassword
 );
+
+router.get("/users", protect, isAdmin, getAllUsers);
 
 export default router;

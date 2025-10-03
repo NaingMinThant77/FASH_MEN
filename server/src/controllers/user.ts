@@ -215,3 +215,13 @@ export const resetPassword = asyncHandler(
     res.status(200).json({ message: "Password updated successfully." });
   }
 );
+
+// @route GET | /api/users
+// @desc get all users
+// @access Admin
+export const getAllUsers = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const users = await User.find().select("-password");
+    res.status(200).json(users);
+  }
+);
