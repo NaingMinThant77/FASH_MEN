@@ -5,6 +5,7 @@ import {
 import ProductList from "../../components/products/ProductList";
 import PaginationNav from "@/components/products/Pagination";
 import { useState } from "react";
+import Hero from "@/common/Hero";
 
 const Home = () => {
   const [newPage, setNewPage] = useState(1);
@@ -16,6 +17,7 @@ const Home = () => {
   return (
     <main className="mt-8 space-y-10 mx-6 lg:mx-4 text-center">
       <section>
+        <Hero />
         <h2 className="text-2xl font-bold mb-6">NEW ARRIVALS</h2>
         <ProductList products={newArrivals?.products || []} />
         <PaginationNav
