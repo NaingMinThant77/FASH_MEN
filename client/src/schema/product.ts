@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const IMAGES_TYPES = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+// const IMAGES_TYPES = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
 
 export const productSchema = z.object({
   name: z
