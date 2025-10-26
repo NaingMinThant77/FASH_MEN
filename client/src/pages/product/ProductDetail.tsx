@@ -78,7 +78,7 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          <div className="w-full md:w-1/2 px-4">
+          <div className="w-full md:w-1/2 px-4 product-container">
             <p className="text-gray-600 mb-4">
               Instock Count: {product.instock_count}
             </p>
